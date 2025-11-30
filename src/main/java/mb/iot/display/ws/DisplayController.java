@@ -43,9 +43,9 @@ public class DisplayController {
         LIB.LCD_2IN_Clear((short) 0);
     }
     
-    public void drawText(String text, int size) throws DisplayException {
+    public void drawText(String text, int size, Color color) throws DisplayException {
         init();
-        LIB.LCD_2IN_Display(Utils.drawText(text, size, Color.ORANGE, 320, 240));
+        LIB.LCD_2IN_Display(Utils.drawText(text, size, color, 320, 240));
     }
     
     public void close() {

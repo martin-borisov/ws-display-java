@@ -1,5 +1,7 @@
 package mb.iot.display;
 
+import java.awt.Color;
+
 import mb.iot.display.ws.DisplayController;
 
 public class HelloWorld {
@@ -9,7 +11,7 @@ public class HelloWorld {
         
         try {
             display.setBacklight(DisplayController.MAX_BACKLIGHT);
-            display.drawText("Well, this is just a simple text", 42);
+            display.drawText("Well, this is just a simple text", 42, Color.ORANGE);
         } catch (DisplayException e) {
             e.printStackTrace();
         }

@@ -18,13 +18,13 @@ public class ApiServer {
     private static final Logger LOG = Logger.getLogger(ApiServer.class.getName());
     private Server server;
     
-    public void start(int serverPort) {
+    public void start(int port) {
         
         // Initialize display
         DisplayController display = new DisplayController();
         
         // Create and start the http container
-        URI baseUri = UriBuilder.fromUri("http://localhost/").port(serverPort).build();
+        URI baseUri = UriBuilder.fromUri("http://localhost/").port(port).build();
         ResourceConfig config = new ResourceConfig(DisplayControllerWrapper.class);
         config.register(new AbstractBinder() {
             protected void configure() {

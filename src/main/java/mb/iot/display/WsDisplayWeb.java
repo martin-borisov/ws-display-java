@@ -1,10 +1,19 @@
 package mb.iot.display;
 
+import com.beust.jcommander.JCommander;
+
 import mb.iot.display.api.ApiServer;
 
 public class WsDisplayWeb {
+    
+    private static final int DEFAULT_PORT = 9090;
+    
     public static void main(String[] args) {
+        
+        Args arg = new Args();
+        JCommander.newBuilder().addObject(arg).build().parse(args);
+        
         ApiServer server = new ApiServer();
-        server.start(9090); 
+        server.start(arg.getPort() > 0 ? arg.getPort() : DEFAULT_PORT); 
     }
 }

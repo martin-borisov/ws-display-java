@@ -18,10 +18,7 @@ public class ApiServer {
     private static final Logger LOG = Logger.getLogger(ApiServer.class.getName());
     private Server server;
     
-    public void start(int port) {
-        
-        // Initialize display
-        DisplayController display = new DisplayController();
+    public void start(int port, DisplayController display) {
         
         // Create and start the http container
         URI baseUri = UriBuilder.fromUri("http://localhost/").port(port).build();

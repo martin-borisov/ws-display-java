@@ -3,10 +3,12 @@ package mb.iot.display.api;
 import static java.text.MessageFormat.format;
 
 import java.awt.Color;
-import java.text.MessageFormat;
+import java.io.InputStream;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -56,6 +58,21 @@ public class DisplayControllerWrapper {
         } else {
             throw new WebApplicationException(
                     format("Value must be from 0 to {0}", DisplayController.MAX_BACKLIGHT), 400);
+        }
+        
+        return "OK";
+    }
+    
+    
+    @PUT
+    @Path("/image")
+    @Consumes("application/octet-stream")
+    public String drawImage(InputStream is) {
+        
+        try(is) {
+            display.drawImage(is);
+        } catch (Exception e) {
+            throw new WebApplicationException("Error drawing image", 500);
         }
         
         return "OK";

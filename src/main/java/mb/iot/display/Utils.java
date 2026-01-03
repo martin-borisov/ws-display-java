@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -21,7 +22,7 @@ import mb.iot.display.text.TextRenderer;
 
 public class Utils {
     
-    public static byte[] drawImage(String path, int width, int height) {
+    public static byte[] drawImage(String path, int width, int height, int rotation) {
         
         BufferedImage image;
         try {
@@ -30,10 +31,10 @@ public class Utils {
             throw new RuntimeException(e);
         }
         
-        return imageToRGB565(image, width, height);
+        return imageToRGB565(image, width, height, rotation);
     }
     
-    public static byte[] drawText(String text, int size, Color color, int dispWidth, int dispHeight) {
+    public static byte[] drawText(String text, int size, Color color, int dispWidth, int dispHeight, int rotation) {
         BufferedImage image = new BufferedImage(dispWidth, dispHeight, BufferedImage.TYPE_USHORT_565_RGB);
         Graphics g = image.getGraphics();
 
@@ -47,13 +48,16 @@ public class Utils {
                 TextFormat.FIRST_LINE_VISIBLE
             );
         
-        return imageToRGB565(image, 320, 240);
+        return imageToRGB565(image, 320, 240, rotation);
     }
     
-    public static byte[] imageToRGB565(BufferedImage image, int width, int height) {
-        
+    public static byte[] imageToRGB565(BufferedImage image, int width, int height, int rotation) {
         BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_USHORT_565_RGB);
-        scaledImage.getGraphics().drawImage(image, 0, 0, width, height, null); // TODO Is this necessary?
+        Graphics2D g = scaledImage.createGraphics();
+        if(rotation > 0) {
+            g.rotate(Math.toRadians(180), width/2, height/2);
+        }
+        g.drawImage(image, null, 0, 0);
         
         byte[] bytes = new byte[width*height*2];
         int byteIdx=0;

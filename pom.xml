@@ -11,6 +11,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <exec.mainClass>mb.iot.display.WsDisplayWeb</exec.mainClass>
         <jetty.version>10.0.24</jetty.version>
         <jersey.version>2.30</jersey.version>
     </properties>
@@ -22,54 +23,59 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ssh</artifactId>
-                <version>3.4.1</version>
+                <version>3.5.3</version>
             </extension>
         </extensions>
 
         <plugins>
-
-            <!-- Tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.22.2</version>
             </plugin>
-
-            <!-- Assembly plugin for building the uber jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>mb.iot.display.WsDisplayWeb</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.1</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>copy-deps-stage-lib</id>
+                        <phase>prepare-package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>copy-dependencies</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
-
-
-            <!-- Wagon plugin for embedded upload -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib</classpathPrefix>
+                            <mainClass>${exec.mainClass}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>wagon-maven-plugin</artifactId>
                 <version>2.0.2</version>
                 <configuration>
                     <serverId>rpizero</serverId>
-                    <fromFile>target/${project.artifactId}-${project.version}-jar-with-dependencies.jar</fromFile>
-                    <url>${rpizero-url}</url>
+                    <fromFile>target/${project.artifactId}-${project.version}.jar</fromFile>
+                    <fromDir>target/lib</fromDir>
+                    <toDir>lib</toDir>
+                    
+                    <!-- Properties defined in settings.xml -->
+                    <url>${rpizero-url}/display</url>
                 </configuration>
             </plugin>
 
